@@ -31,17 +31,12 @@ stages:
         mavenAuthenticateFeed: false
         effectivePomSkip: false
         sonarQubeRunAnalysis: false
-    - task: Docker@2
-      displayName: Build an image
+    - task: ECRPushImage@1
       inputs:
-        command: build
-        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-        repository: $(imageName)
-        tags: |
-          $(tag)
-    - task: ArtifactoryDocker@1
-      inputs:
-        command: 'push'
-        artifactoryService: 'Art_SVC_conn'
-        targetRepo: 'docker-local'
-        imageName: '$(imageName):$(tag)'
+        awsCredentials: 'AWS EC2user'
+        regionName: 'us-east-1'
+        imageSource: 'imageid'
+        sourceImageId: '$(imageName):$(tag)'
+        repositoryName: '$(repoName)'
+        pushTag: '$(tag)'
+        forceDockerNamingConventions: true
